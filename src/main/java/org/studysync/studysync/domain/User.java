@@ -19,7 +19,7 @@ public class User implements OAuth2User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private Integer snsId;
+    private String snsId;
 
     @Column(nullable = false, length = 50)
     private String snsType;
