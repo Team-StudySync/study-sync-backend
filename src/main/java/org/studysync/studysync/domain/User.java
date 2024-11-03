@@ -2,9 +2,9 @@ package org.studysync.studysync.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.studysync.studysync.constant.SnsType;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +22,7 @@ public class User implements OAuth2User {
     private String snsId;
 
     @Column(nullable = false, length = 50)
-    private String snsType;
+    private SnsType snsType;
 
     @Column(nullable = false, length = 255)
     private String name;
@@ -34,6 +34,7 @@ public class User implements OAuth2User {
     private String email;
 
     private String authority;
+
 
     @Override
     public Map<String, Object> getAttributes() {
