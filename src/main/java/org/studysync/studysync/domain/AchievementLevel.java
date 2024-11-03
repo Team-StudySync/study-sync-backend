@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class AchievementLevel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(nullable = false)

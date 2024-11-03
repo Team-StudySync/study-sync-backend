@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(nullable = false)
