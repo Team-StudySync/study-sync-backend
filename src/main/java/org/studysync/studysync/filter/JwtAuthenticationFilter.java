@@ -47,16 +47,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String accessToken = null;
         try {
-            accessToken = jwtTokenProvider.resolveToken(request.getHeader("Authorization"));
-        } catch (HttpErrorException e) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        try {
+            String accessToken = jwtTokenProvider.resolveAccessToken(request.getHeader("Authorization"));
             jwtTokenProvider.validateToken(TokenType.ACCESS_TOKEN, accessToken);
+
             Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);

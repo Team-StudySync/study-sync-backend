@@ -3,6 +3,7 @@ package org.studysync.studysync.provider;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.studysync.studysync.config.HttpErrorCode;
 import org.studysync.studysync.constant.TokenType;
@@ -80,7 +81,7 @@ public class JwtTokenProvider {
            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
 
            if (claims.get("sub") == null) {
-               throw new HttpErrorException(HttpErrorCode.NotValidTokenError);
+               throw new HttpErrorException(HttpErrorCode.NotValidAccessTokenError);
            }
 
            String snsId = claims.get("sub").toString();
@@ -103,7 +104,7 @@ public class JwtTokenProvider {
     public void validateToken(TokenType tokenType, String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-        } catch (SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
+        } catch (SignatureException | SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
             if (tokenType == TokenType.ACCESS_TOKEN) throw new HttpErrorException(HttpErrorCode.NotValidAccessTokenError);
             if (tokenType == TokenType.REFRESH_TOKEN) throw new HttpErrorException(HttpErrorCode.NotValidRefreshTokenError);
         } catch (ExpiredJwtException e) {
@@ -142,6 +143,20 @@ public class JwtTokenProvider {
         }
 
         throw new HttpErrorException(HttpErrorCode.NotValidTokenError);
+    }
+
+    /**
+     * accessToken의 인증타입(Bearer)을 제거하여 반환
+     * @param accessToken
+     * @return 인증타입(Bearer)을 제거한 token
+     * @throws HttpErrorException 토큰이 유효하지 않을 경우 에러를 던진다.
+     */
+    public String resolveAccessToken(String accessToken) {
+        if (StringUtils.hasText(accessToken) && accessToken.startsWith("Bearer")) {
+            return accessToken.substring(7);
+        }
+
+        throw new HttpErrorException(HttpErrorCode.NotValidAccessTokenError);
     }
 
     /**
