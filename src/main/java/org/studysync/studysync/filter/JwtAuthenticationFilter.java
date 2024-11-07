@@ -34,6 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             String accessToken = request.getHeader("Authorization");
+            if(accessToken == null){
+                throw new HttpErrorException(HttpErrorCode.AccessDeniedError);
+            }
 
             String resolvedAccessToken = jwtTokenProvider.resolveAccessToken(accessToken);
             jwtTokenProvider.validateToken(TokenType.ACCESS_TOKEN, resolvedAccessToken);
