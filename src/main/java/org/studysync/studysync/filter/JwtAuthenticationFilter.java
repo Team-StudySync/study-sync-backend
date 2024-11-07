@@ -12,7 +12,6 @@ import org.studysync.studysync.constant.TokenType;
 import org.studysync.studysync.exception.HttpErrorException;
 import org.studysync.studysync.exception.ErrorResponseDto;
 import org.studysync.studysync.provider.JwtTokenProvider;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -33,25 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain chain
     ) throws ServletException, IOException {
-        if (request.getRequestURI().equals("/api/auth/login") && request.getMethod().equals(HttpMethod.POST.name())) {
-            chain.doFilter(request, response);
-            return;
-        }
-        if (request.getRequestURI().equals("/api/auth/refreshToken") && request.getMethod().equals(HttpMethod.POST.name())) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        if (request.getRequestURI().equals("/api/auth/logout") && request.getMethod().equals(HttpMethod.POST.name())) {
-            chain.doFilter(request, response);
-            return;
-        }
-
         try {
-            String accessToken = jwtTokenProvider.resolveAccessToken(request.getHeader("Authorization"));
-            jwtTokenProvider.validateToken(TokenType.ACCESS_TOKEN, accessToken);
+            String accessToken = request.getHeader("Authorization");
 
-            Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+            String resolvedAccessToken = jwtTokenProvider.resolveAccessToken(accessToken);
+            jwtTokenProvider.validateToken(TokenType.ACCESS_TOKEN, resolvedAccessToken);
+
+            Authentication authentication = jwtTokenProvider.getAuthentication(resolvedAccessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } catch (Exception e) {
