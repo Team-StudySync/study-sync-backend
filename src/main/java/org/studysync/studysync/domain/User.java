@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.studysync.studysync.constant.SnsType;
+import org.studysync.studysync.dto.auth.oauth.OAuthUserInfo;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +13,8 @@ import java.util.Map;
 
 @Entity(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Getter
 public class User implements OAuth2User {
     @Id
@@ -30,7 +33,7 @@ public class User implements OAuth2User {
     @Column(length = 255)
     private String profileImage;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String email;
 
     private String authority;
@@ -49,5 +52,14 @@ public class User implements OAuth2User {
     @Override
     public String getName() {
         return name;
+    }
+
+    public static User from(OAuthUserInfo.Dto dto){
+        return User.builder()
+                .snsId(dto.getSnsId())
+                .snsType(dto.getSnsType())
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .build();
     }
 }
