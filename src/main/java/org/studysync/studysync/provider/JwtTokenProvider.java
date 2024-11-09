@@ -76,23 +76,17 @@ public class JwtTokenProvider {
      * @return Authentication
      * @throws HttpErrorException
      */
-    public Authentication getAuthentication(String accessToken) {
-       try {
-           Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+    public Authentication getAuthentication(String accessToken){
+        Claims claims = parseClaims(accessToken);
 
-           if (claims.get("sub") == null) {
-               throw new HttpErrorException(HttpErrorCode.NotValidAccessTokenError);
-           }
-
-           String snsId = claims.get("sub").toString();
-           User users = userRepository.findBySnsId(snsId).orElseThrow(() -> new HttpErrorException(HttpErrorCode.UserNotFoundError));
-
-           return new UsernamePasswordAuthenticationToken(users, accessToken, null);
-       } catch (ExpiredJwtException e) {
-           throw new HttpErrorException(HttpErrorCode.ExpiredAccessTokenError);
-       } catch (Exception e) {
+        if(claims.get("sub") == null){
             throw new HttpErrorException(HttpErrorCode.NotValidAccessTokenError);
-       }
+        }
+
+        String username = claims.get("sub").toString(); // 복호화된 accessToken 에서 사용자 id 추출
+        User user = userRepository.findBySnsId(username).orElseThrow(() -> new HttpErrorException(HttpErrorCode.UserNotFoundError));
+
+        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 
     /**
@@ -175,5 +169,13 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now.getTime() + accessTokenExpirationPeriod))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    private Claims parseClaims(String accessToken){
+        try{
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+        } catch (ExpiredJwtException e){
+            return e.getClaims();
+        }
     }
 }
