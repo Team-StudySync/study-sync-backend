@@ -6,9 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.studysync.studysync.config.HttpErrorCode;
 import org.studysync.studysync.constant.SnsType;
 import org.studysync.studysync.domain.User;
-import org.studysync.studysync.dto.auth.login.Login;
-import org.studysync.studysync.dto.auth.oauth.OAuthUserInfo;
-import org.studysync.studysync.dto.auth.tokenReissue.TokenReIssue;
+import org.studysync.studysync.dto.auth.login.LoginDto;
+import org.studysync.studysync.dto.auth.login.LoginRequestDto;
+import org.studysync.studysync.dto.auth.oauth.userInfo.OAuthUserInfoDto;
+import org.studysync.studysync.dto.auth.tokenReissue.TokenReIssueDto;
 import org.studysync.studysync.exception.HttpErrorException;
 import org.studysync.studysync.provider.JwtTokenProvider;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,8 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
 
-    public Login.Dto login(Login.Request requestDto) {
-        OAuthUserInfo.Dto userInfo = getUserInfo(requestDto.getSnsType(), requestDto.getAccessToken());
+    public LoginDto login(LoginRequestDto requestDto) {
+        OAuthUserInfoDto userInfo = getUserInfo(requestDto.getSnsType(), requestDto.getAccessToken());
         Optional<User> user = userRepository.findBySnsId(userInfo.getSnsId());
         if (user.isEmpty()) {
             signup(userInfo);
@@ -41,18 +42,18 @@ public class AuthService {
 
         redisService.save(refreshToken, accessToken);
 
-        return Login.Dto.of(accessToken, refreshToken);
+        return LoginDto.of(accessToken, refreshToken);
     }
 
 
-    private OAuthUserInfo.Dto getUserInfo(SnsType snsType, String accessToken) {
+    private OAuthUserInfoDto getUserInfo(SnsType snsType, String accessToken) {
         return switch (snsType) {
-            case Kakao -> OAuthUserInfo.Dto.from(kakaoOAuthService.getUserInfo(accessToken));
-            case Naver -> OAuthUserInfo.Dto.from(naverOAuthService.getUserInfo(accessToken));
+            case Kakao -> OAuthUserInfoDto.from(kakaoOAuthService.getUserInfo(accessToken));
+            case Naver -> OAuthUserInfoDto.from(naverOAuthService.getUserInfo(accessToken));
         };
     }
 
-    private void signup(OAuthUserInfo.Dto userInfo) {
+    private void signup(OAuthUserInfoDto userInfo) {
         userRepository.save(User.from(userInfo));
     }
 
@@ -67,7 +68,7 @@ public class AuthService {
         redisService.delete(resolvedRefreshToken);
     }
 
-    public TokenReIssue.Dto reIssueToken(String accessToken, String refreshToken) {
+    public TokenReIssueDto reIssueToken(String accessToken, String refreshToken) {
         String resolvedAccessToken = jwtTokenProvider.resolveToken(accessToken);
         String resolvedRefreshToken = jwtTokenProvider.resolveToken(refreshToken);
 
@@ -99,7 +100,7 @@ public class AuthService {
         String reIssuedAccessToken = jwtTokenProvider.reIssueAccessToken(resolvedAccessToken);
         redisService.delete(resolvedAccessToken);
         redisService.save(resolvedRefreshToken, reIssuedAccessToken);
-        return TokenReIssue.Dto.of(reIssuedAccessToken);
+        return TokenReIssueDto.of(reIssuedAccessToken);
 
     }
 }

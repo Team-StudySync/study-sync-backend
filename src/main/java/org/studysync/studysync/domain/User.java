@@ -5,7 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.studysync.studysync.constant.SnsType;
-import org.studysync.studysync.dto.auth.oauth.OAuthUserInfo;
+import org.studysync.studysync.dto.auth.oauth.userInfo.OAuthUserInfoDto;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -54,7 +54,7 @@ public class User implements OAuth2User {
         return name;
     }
 
-    public static User from(OAuthUserInfo.Dto dto){
+    public static User from(OAuthUserInfoDto dto){
         return User.builder()
                 .snsId(dto.getSnsId())
                 .snsType(dto.getSnsType())

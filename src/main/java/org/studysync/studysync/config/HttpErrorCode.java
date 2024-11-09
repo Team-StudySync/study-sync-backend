@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum HttpErrorCode {
     // ----- Common ------
     NotValidRequestError(
-            HttpStatus.BAD_REQUEST, "유효하지 않은 요청입니다.", "요청 헤더 혹은 본문을 확인해주세요"
+            HttpStatus.BAD_REQUEST, "유효하지 않은 요청입니다."
     ),
     QueryParamTypeMismatchError(
             HttpStatus.BAD_REQUEST, "쿼리 파라미터의 타입이 올바르지 않습니다."
@@ -87,17 +87,9 @@ public enum HttpErrorCode {
 
     private final HttpStatus httpStatus;
     private final String message;
-    private final String description;
 
     HttpErrorCode(HttpStatus httpStatus, String message){
         this.httpStatus = httpStatus;
         this.message = message;
-        this.description = null;
-    }
-
-    HttpErrorCode(HttpStatus httpStatus, String message, String description){
-        this.httpStatus = httpStatus;
-        this.message = message;
-        this.description = description;
     }
 }

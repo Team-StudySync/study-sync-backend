@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.studysync.studysync.config.HttpErrorCode;
-import org.studysync.studysync.dto.auth.oauth.naver.NaverUserInfo;
+import org.studysync.studysync.dto.auth.oauth.naver.NaverUserInfoResponse;
 import org.studysync.studysync.exception.HttpErrorException;
 import reactor.core.publisher.Mono;
 
@@ -19,7 +19,7 @@ public class NaverOAuthService {
         this.webClient = webClient;
     }
 
-    public NaverUserInfo.Response getUserInfo(String accessToken) {
+    public NaverUserInfoResponse getUserInfo(String accessToken) {
         return webClient.get()
                 .uri("/v1/nid/me")
                 .header(
@@ -31,7 +31,7 @@ public class NaverOAuthService {
                         this::handle401Error)
                 .onStatus(status -> status.value() == 403,
                         this::handle403Error)
-                .bodyToMono(NaverUserInfo.Response.class)
+                .bodyToMono(NaverUserInfoResponse.class)
                 .block();
     }
 

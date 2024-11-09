@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.studysync.studysync.config.HttpErrorCode;
-import org.studysync.studysync.dto.auth.oauth.kakao.KakaoUserInfo;
+import org.studysync.studysync.dto.auth.oauth.kakao.KakaoUserInfoResponse;
 import org.studysync.studysync.exception.HttpErrorException;
 import reactor.core.publisher.Mono;
 
@@ -19,7 +19,7 @@ public class KakaoOAuthService {
         this.webClient = webClient;
     }
 
-    public KakaoUserInfo.Response getUserInfo(String accessToken) {
+    public KakaoUserInfoResponse getUserInfo(String accessToken) {
         return webClient.get()
                 .uri("/v2/user/me")
                 .header("Authorization", accessToken)
@@ -28,8 +28,7 @@ public class KakaoOAuthService {
                         this::handle401Error)
                 .onStatus(status -> status.value() == 403,
                         this::handle403Error)
-                .bodyToMono(KakaoUserInfo.Response.class)
-
+                .bodyToMono(KakaoUserInfoResponse.class)
                 .block();
     }
 

@@ -31,6 +31,9 @@ dependencies {
 
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
+	// swagger ui
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
 	// OAuth
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
