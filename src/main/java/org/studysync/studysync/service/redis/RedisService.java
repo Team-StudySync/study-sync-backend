@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import org.studysync.studysync.config.HttpErrorCode;
+import org.studysync.studysync.exception.HttpErrorException;
 
 import java.util.Optional;
 
@@ -26,6 +28,9 @@ public class RedisService {
 
     public void delete(String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.getAndDelete(key);
+        String deletedData = valueOperations.getAndDelete(key);
+        if (deletedData == null) {
+            throw new HttpErrorException(HttpErrorCode.InternalServerError);
+        }
     }
 }
