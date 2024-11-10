@@ -20,7 +20,7 @@ public class AchievementLevel {
     private StudyGroup group;
 
     @Column(nullable = false)
-    private LocalDate achievement_day;
+    private LocalDate achievementDay;
 
     @Column(nullable = false)
     private Double achievement;

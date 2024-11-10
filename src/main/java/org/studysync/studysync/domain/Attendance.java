@@ -25,7 +25,7 @@ public class Attendance {
     private StudyGroup group;
 
     @Column(nullable = false)
-    private LocalDate attendance_day;
+    private LocalDate attendanceDay;
 
     private LocalDateTime attendanceTime;
 
