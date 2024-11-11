@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.studysync.studysync.config.HttpErrorCode;
 import org.studysync.studysync.exception.HttpErrorException;
 
+import java.time.Duration;
 import java.util.Optional;
 
 @Service
@@ -19,6 +20,11 @@ public class RedisService {
     public void save(String key, String value) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(key, value);
+    }
+
+    public void save(String key, String value, Duration timeout) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(key, value, timeout);
     }
 
     public Optional<String> get(String key) {
