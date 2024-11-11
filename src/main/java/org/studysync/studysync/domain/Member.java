@@ -1,13 +1,14 @@
 package org.studysync.studysync.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.studysync.studysync.constant.GroupMemberRole;
 
 @Entity(name = "members")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +23,22 @@ public class Member {
     private StudyGroup group;
 
     @Column(nullable = false, length = 10)
-    private String role;
+    private GroupMemberRole role;
+
+
+    public static Member createAdminMember(User user, StudyGroup group) {
+        return Member.builder()
+                .user(user)
+                .group(group)
+                .role(GroupMemberRole.ADMIN_ROLE)
+                .build();
+    }
+
+    public static Member createCommonMember(User user, StudyGroup group) {
+        return Member.builder()
+                .user(user)
+                .group(group)
+                .role(GroupMemberRole.MEMBER_ROLE)
+                .build();
+    }
 }

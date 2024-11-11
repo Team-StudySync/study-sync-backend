@@ -1,6 +1,5 @@
 package org.studysync.studysync.config;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -83,6 +82,24 @@ public enum HttpErrorCode {
     ),
     NoSuchRefreshTokenError(
             HttpStatus.UNAUTHORIZED, "존재하지 않은 RefreshToken입니다."
+    ),
+
+    // ----- Study Group ------
+    NoSuchStudyGroupError(
+            HttpStatus.NOT_FOUND, "존재하지 않은 스터디 그룹입니다."
+    ),
+
+    // ----- Study Group Member ------
+    NoSuchStudyGroupMemberError(
+            HttpStatus.NOT_FOUND, "존재하지 않은 스터디 그룹 멤버입니다."
+    ),
+    AlreadyExistMemberError(
+            HttpStatus.CONFLICT, "이미 존재하는 그룹 멤버 입니다."
+    ),
+
+    // ----- Invitation ------
+    NoSuchInvitationCodeError(
+            HttpStatus.NOT_FOUND, "존재하지 않거나 만료된 초대 코드입니다."
     );
 
     private final HttpStatus httpStatus;
