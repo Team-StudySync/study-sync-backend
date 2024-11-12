@@ -62,4 +62,9 @@ public class User implements OAuth2User {
                 .email(dto.getEmail())
                 .build();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof User && id.equals(((User) obj).id);
+    }
 }
