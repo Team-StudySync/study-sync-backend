@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import org.studysync.studysync.domain.Member;
 import org.studysync.studysync.domain.StudyGroup;
 import org.studysync.studysync.domain.User;
-import org.studysync.studysync.dto.group.StudyGroupCreateDto;
-import org.studysync.studysync.dto.group.StudyGroupCreateRequestDto;
+import org.studysync.studysync.dto.group.studyGroupCreate.StudyGroupCreateDto;
+import org.studysync.studysync.dto.group.studyGroupCreate.StudyGroupCreateRequestDto;
+import org.studysync.studysync.dto.group.studyGroupListGet.StudyGroupListGetDto;
 import org.studysync.studysync.repository.StudyGroupRepository;
 import org.studysync.studysync.repository.MemberRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +31,11 @@ public class StudyGroupService {
         Member admin = memberRepository.save(Member.createAdminMember(user, newGroup));
 
         return StudyGroupCreateDto.of(admin);
+    }
+
+    public StudyGroupListGetDto getStudyGroups(User user) {
+        List<Member> foundMembers = memberRepository.findByUser(user);
+        List<StudyGroup> groups = foundMembers.stream().map(Member::getGroup).toList(); // 유저가 속한 그룹 리스트
+        return StudyGroupListGetDto.fromEntity(groups);
     }
 }

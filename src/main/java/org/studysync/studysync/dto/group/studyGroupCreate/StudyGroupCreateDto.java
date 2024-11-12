@@ -1,4 +1,4 @@
-package org.studysync.studysync.dto.group;
+package org.studysync.studysync.dto.group.studyGroupCreate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

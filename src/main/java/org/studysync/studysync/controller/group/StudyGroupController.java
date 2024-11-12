@@ -10,15 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.studysync.studysync.config.HttpErrorCode;
 import org.studysync.studysync.domain.User;
-import org.studysync.studysync.dto.group.StudyGroupCreateDto;
-import org.studysync.studysync.dto.group.StudyGroupCreateRequestDto;
-import org.studysync.studysync.dto.group.StudyGroupCreateResponseDto;
+import org.studysync.studysync.dto.group.studyGroupCreate.StudyGroupCreateDto;
+import org.studysync.studysync.dto.group.studyGroupCreate.StudyGroupCreateRequestDto;
+import org.studysync.studysync.dto.group.studyGroupCreate.StudyGroupCreateResponseDto;
+import org.studysync.studysync.dto.group.studyGroupListGet.StudyGroupListGetDto;
+import org.studysync.studysync.dto.group.studyGroupListGet.StudyGroupListGetResponseDto;
 import org.studysync.studysync.service.group.StudyGroupService;
 import org.studysync.studysync.swagger.ApiErrorCodeExample;
 import org.studysync.studysync.swagger.ApiErrorCodeExamples;
@@ -44,5 +43,19 @@ public class StudyGroupController {
             @Valid @RequestBody StudyGroupCreateRequestDto requestDto) {
         StudyGroupCreateDto dto = studyGroupService.createStudyGroup(user, requestDto);
         return new ResponseEntity<>(StudyGroupCreateResponseDto.fromDto(dto), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "그룹 리스트 조회", description = "그룹 리스트를 조회합니다.")
+    @ApiErrorCodeExamples(value = {
+            @ApiErrorCodeExample(value = HttpErrorCode.AccessDeniedError),
+            @ApiErrorCodeExample(value = HttpErrorCode.NotValidAccessTokenError),
+            @ApiErrorCodeExample(value = HttpErrorCode.ExpiredAccessTokenError),
+            @ApiErrorCodeExample(value = HttpErrorCode.UserNotFoundError)
+    })
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = StudyGroupListGetResponseDto.class)))
+    @GetMapping
+    public ResponseEntity<StudyGroupListGetResponseDto> getStudyGroups(@AuthenticationPrincipal User user) {
+        StudyGroupListGetDto dto = studyGroupService.getStudyGroups(user);
+        return new ResponseEntity<>(StudyGroupListGetResponseDto.fromDto(dto), HttpStatus.OK);
     }
 }
